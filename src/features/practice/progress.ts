@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import type { AttemptResult } from '@/api';
+import type { AttemptResult, TopicStatus } from '@/api';
 
 export type Answered = {
   exerciseId: string;
@@ -10,6 +10,8 @@ export type Answered = {
   result: AttemptResult;
   /** A nota do tópico antes desta resposta, para mostrar a variação. */
   previousScore: number | null;
+  /** O status do tópico antes desta resposta, quando o app o conhecia: diz se foi ela que o dominou. */
+  previousStatus: TopicStatus | null;
 };
 
 export type PracticeProgress = {
@@ -17,7 +19,7 @@ export type PracticeProgress = {
   answers: Answered[];
   /** Quantas respostas já tiveram o retorno visto ("Continuar"). O exercício atual é o desta posição. */
   seen: number;
-  /** Se a folha de desbloqueio da resposta atual já foi fechada. */
+  /** Se a folha de domínio da resposta atual já foi fechada. */
   unlockSeen: boolean;
 };
 

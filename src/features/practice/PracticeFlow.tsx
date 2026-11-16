@@ -12,8 +12,8 @@ import {
 import { DiagnosisStep } from './DiagnosisStep';
 import { ExerciseStep, type Outcome } from './ExerciseStep';
 import { LessonSummary } from './LessonSummary';
-import { usePracticeProgress } from './progress';
-import { UnlockSheet } from './UnlockSheet';
+import { MasterySheet } from './MasterySheet';
+import { usePracticeProgress, type Answered } from './progress';
 
 type Props = {
   lesson: Lesson;
@@ -24,7 +24,7 @@ type Props = {
 
 /**
  * A prática de uma lição, do primeiro exercício ao resumo. Cada resposta vai para a API na hora; o retorno decide o que
- * vem depois: a faixa de acerto, a tela do erro, a folha de desbloqueio (se a resposta liberou tópicos) e, no fim, o resumo.
+ * vem depois: a faixa de acerto, a tela do erro, a folha de domínio (se a resposta dominou o tópico ou liberou outros) e, no fim, o resumo.
  */
 export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
   const queryClient = useQueryClient();
@@ -38,18 +38,17 @@ export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
   const answered = finished ? undefined : progress.answers[progress.seen];
   const submit = useSubmitAttempt(exercise.id);
 
-  /** A nota do tópico antes de responder: a da última resposta desta sessão, ou a que o app já tinha em cache. */
-  const scoreBefore = (): number | null => {
-    const last = progress.answers[progress.answers.length - 1];
-    if (last) {
-      return last.result.topic.score;
-    }
+  const cachedTopic = () => {
     const topic = queryClient.getQueryData<TopicDetail>(queryKeys.topic(lesson.topicId));
-    if (topic) {
-      return topic.score;
-    }
     const trail = queryClient.getQueryData<Trail>(queryKeys.trail);
-    return trail?.topics.find((item) => item.id === lesson.topicId)?.score ?? null;
+    return topic ?? trail?.topics.find((item) => item.id === lesson.topicId);
+  };
+
+  /** O tópico antes de responder: como ficou na última resposta desta sessão, ou como o app o tinha em cache. */
+  const topicBefore = () => {
+    const last = progress.answers[progress.answers.length - 1];
+    const known = last ? last.result.topic : cachedTopic();
+    return { score: known?.score ?? null, status: known?.status ?? null };
   };
 
   if (finished) {
@@ -90,7 +89,7 @@ export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
           submitting={submit.isPending}
           failed={submit.isError}
           onSubmit={(alternativeId, responseSeconds) => {
-            const previousScore = scoreBefore();
+            const before = topicBefore();
             submit.mutate(
               { alternativeId, responseSeconds },
               {
@@ -99,7 +98,13 @@ export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
                     ...p,
                     answers: [
                       ...p.answers,
-                      { exerciseId: exercise.id, chosenId: alternativeId, result, previousScore },
+                      {
+                        exerciseId: exercise.id,
+                        chosenId: alternativeId,
+                        result,
+                        previousScore: before.score,
+                        previousStatus: before.status,
+                      },
                     ],
                     unlockSeen: false,
                   })),
@@ -110,11 +115,10 @@ export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
           onExit={onExit}
         />
       )}
-      <UnlockSheet
+      <MasterySheet
+        topicName={cachedTopic()?.name}
         topics={answered?.result.unlockedTopics ?? []}
-        visible={Boolean(
-          answered && answered.result.unlockedTopics.length > 0 && !progress.unlockSeen,
-        )}
+        visible={Boolean(answered && celebrates(answered) && !progress.unlockSeen)}
         onContinue={() => update((p) => ({ ...p, unlockSeen: true }))}
         onSeeTrail={() => {
           update((p) => ({ ...p, unlockSeen: true }));
@@ -123,4 +127,11 @@ export function PracticeFlow({ lesson, onExit, onSeeTrail, onReview }: Props) {
       />
     </>
   );
+}
+
+/** A resposta merece a folha se foi ela que dominou o tópico, ou se liberou outros. */
+function celebrates({ result, previousStatus }: Answered): boolean {
+  const justMastered =
+    previousStatus !== null && previousStatus !== 'mastered' && result.topic.status === 'mastered';
+  return justMastered || result.unlockedTopics.length > 0;
 }

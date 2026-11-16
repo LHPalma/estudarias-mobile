@@ -7,14 +7,17 @@ import { joinNames } from '@/lib/format';
 import { colors, radius, spacing } from '@/theme';
 
 type Props = {
+  /** O nome do tópico que acabou de ser dominado, quando o app o conhece. */
+  topicName?: string;
+  /** Os tópicos que a resposta liberou; pode vir vazio (o último da trilha, ou um dependente que espera outro requisito). */
   topics: TopicRef[];
   visible: boolean;
   onContinue: () => void;
   onSeeTrail: () => void;
 };
 
-/** A folha que sobe quando uma resposta domina o tópico e libera os seguintes. */
-export function UnlockSheet({ topics, visible, onContinue, onSeeTrail }: Props) {
+/** A folha que sobe quando uma resposta domina o tópico. Se ela também liberou tópicos, diz quais. */
+export function MasterySheet({ topicName, topics, visible, onContinue, onSeeTrail }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -31,12 +34,16 @@ export function UnlockSheet({ topics, visible, onContinue, onSeeTrail }: Props) 
             Tópico dominado
           </AppText>
           <AppText variant="display" accessibilityRole="header">
-            Você liberou {joinNames(topics.map((topic) => topic.name))}
+            {topics.length > 0
+              ? `Você liberou ${joinNames(topics.map((topic) => topic.name))}`
+              : `Você dominou ${topicName ?? 'este tópico'}`}
           </AppText>
           <AppText variant="support" color="inkStrong">
-            {topics.length === 1
-              ? 'O novo tópico já está aberto na trilha.'
-              : 'Os novos tópicos já estão abertos na trilha.'}
+            {topics.length === 0
+              ? 'Você atingiu a meta com respostas suficientes. O tópico continua dominado mesmo que a nota caia.'
+              : topics.length === 1
+                ? 'O novo tópico já está aberto na trilha.'
+                : 'Os novos tópicos já estão abertos na trilha.'}
           </AppText>
           <View style={styles.actions}>
             <Button label="Continuar a lição" onPress={onContinue} />
