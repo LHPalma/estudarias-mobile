@@ -68,7 +68,8 @@ src/
 │   └── dev/      # só em desenvolvimento: a galeria de componentes
 ├── api/          # cliente da API, tipos do contrato, hooks e o modo mock
 ├── components/   # os componentes do design (Button, TopicCard, MathText...)
-├── lib/          # lógica sem tela (a marcação de frações)
+├── features/     # as telas por assunto, sem rota nem busca de dados (trilha, mapa...)
+├── lib/          # lógica sem tela (a marcação de frações, o desenho do mapa)
 ├── session/      # a sessão: tokens, renovação no 401 e o provider
 ├── services.ts   # monta a API e a sessão (reais ou do modo mock)
 └── theme/        # tokens: cores, fontes, escala de texto, espaçamento

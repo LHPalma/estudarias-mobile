@@ -96,7 +96,7 @@ describe('sair', () => {
     await expectPath('/trail');
 
     // Act
-    await fireEvent.press(await screen.findByRole('button', { name: 'Sair' }));
+    await fireEvent.press(await screen.findByRole('button', { name: 'Sair da conta' }));
 
     // Assert
     await expectPath('/login');
