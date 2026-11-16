@@ -4,11 +4,18 @@ import { useApi } from './ApiProvider';
 import type { AttemptRequest, DueReviews, ReviewRating } from './types';
 
 export const queryKeys = {
+  me: ['me'] as const,
   trail: ['trail'] as const,
   topic: (topicId: string) => ['topic', topicId] as const,
   lesson: (lessonId: string) => ['lesson', lessonId] as const,
   dueReviews: ['reviews', 'due'] as const,
 };
+
+/** O perfil de quem está logado. Muda pouco, então fica em cache enquanto a sessão durar. */
+export function useMe() {
+  const api = useApi();
+  return useQuery({ queryKey: queryKeys.me, queryFn: () => api.getMe(), staleTime: Infinity });
+}
 
 export function useTrail() {
   const api = useApi();

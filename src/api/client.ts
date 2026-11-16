@@ -4,6 +4,7 @@ import type {
   AttemptResult,
   DueReviews,
   Lesson,
+  Me,
   ReviewRequest,
   ReviewResult,
   TopicDetail,
@@ -12,6 +13,7 @@ import type {
 
 /** As operações que as telas usam. A implementação real fala HTTP; a do modo mock responde do contrato, sem rede. */
 export type ApiClient = {
+  getMe(): Promise<Me>;
   getTrail(): Promise<Trail>;
   getTopic(topicId: string): Promise<TopicDetail>;
   getLesson(lessonId: string): Promise<Lesson>;
@@ -23,6 +25,7 @@ export type ApiClient = {
 export function createHttpApi(http: Http): ApiClient {
   const id = encodeURIComponent;
   return {
+    getMe: () => http.get('/me'),
     getTrail: () => http.get('/trail'),
     getTopic: (topicId) => http.get(`/topics/${id(topicId)}`),
     getLesson: (lessonId) => http.get(`/lessons/${id(lessonId)}`),

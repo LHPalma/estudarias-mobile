@@ -15,6 +15,13 @@ export type FeedbackKind = 'correct' | 'incorrect' | 'incorrectWithDiagnosis';
 
 export type ReviewRating = 'again' | 'hard' | 'good' | 'easy';
 
+// ---------- GET /me ----------
+
+export type Me = {
+  user: { id: string; email: string; role: string };
+  student: { id: string; name: string; experimentalGroup: string };
+};
+
 // ---------- GET /trail ----------
 
 export type TrailTopic = Linked & {

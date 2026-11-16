@@ -1,3 +1,4 @@
+import type { AuthApi, AuthSession } from '../auth';
 import type { ApiClient } from '../client';
 import { ApiError } from '../errors';
 import type {
@@ -74,17 +75,49 @@ export function computeScore(mostRecentFirst: Answer[]): number | null {
   return Math.floor(((100 * earned) / total) * 10) / 10;
 }
 
-export function createMockApi({
+type Account = { id: string; studentId: string; name: string; email: string; password: string };
+
+const REFRESH_PREFIX = 'mock-refresh:';
+
+/** A conta com que o mock já nasce, para entrar sem cadastrar. */
+export const MOCK_ACCOUNT = { name: 'Ana', email: 'ana@example.com', password: 'Senha@123' };
+
+export function createMockApi(options: MockOptions = {}): ApiClient {
+  return createMockBackend(options).api;
+}
+
+/** A API e a autenticação em memória, juntas: o perfil (`/me`) é o de quem entrou. */
+export function createMockBackend({
   group = 'diagnostic',
   latencyMs = 0,
   now = () => new Date(),
-}: MockOptions = {}): ApiClient {
+}: MockOptions = {}): { api: ApiClient; auth: AuthApi } {
+  const accounts = new Map<string, Account>();
+  let current: Account | null = null;
+
+  function addAccount(name: string, email: string, password: string): Account {
+    const account = { id: nextId(14), studentId: nextId(6), name, email, password };
+    accounts.set(email.toLowerCase(), account);
+    return account;
+  }
+
+  function sessionFor(account: Account): AuthSession {
+    current = account;
+    return {
+      accessToken: `mock-access:${account.email}`,
+      accessTokenExpiresAt: new Date(now().getTime() + 15 * 60 * 1000).toISOString(),
+      refreshToken: `${REFRESH_PREFIX}${account.email}`,
+      user: { id: account.id, email: account.email, role: 'Student', studentId: account.studentId },
+    };
+  }
+
   const history = new Map<string, Answer[]>(TOPICS.map((topic) => [topic.id, []]));
   const unlocked = new Set<string>([TOPIC_ID.basics, TOPIC_ID.fractions]);
   const mastered = new Set<string>([TOPIC_ID.basics]);
   const cards: Card[] = [];
   let sequence = 0;
   const nextId = (table: number) => mockId(table, 1000 + ++sequence);
+  addAccount(MOCK_ACCOUNT.name, MOCK_ACCOUNT.email, MOCK_ACCOUNT.password);
 
   // O aluno do mock começa com Operações básicas dominado, Frações em andamento (3 respostas) e dois cartões vencidos.
   history.set(TOPIC_ID.basics, [
@@ -175,7 +208,67 @@ export function createMockApi({
     return produce();
   };
 
-  return {
+  const auth: AuthApi = {
+    register: ({ name, email, password }) =>
+      respond(() => {
+        if (name.trim().length === 0) {
+          throw new ApiError(400, 'student.name.required', 'Validation error');
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+          throw new ApiError(400, 'identity.email.invalid', 'Validation error');
+        }
+        if (password.length < 8) {
+          throw new ApiError(400, 'identity.password.tooShort', 'Validation error');
+        }
+        if (accounts.has(email.toLowerCase())) {
+          throw new ApiError(409, 'identity.email.taken', 'Conflict');
+        }
+        return sessionFor(addAccount(name.trim(), email, password));
+      }),
+
+    login: ({ email, password }) =>
+      respond(() => {
+        const account = accounts.get(email.toLowerCase());
+        if (!account || account.password !== password) {
+          throw new ApiError(401, 'identity.credentials.invalid', 'Unauthorized');
+        }
+        return sessionFor(account);
+      }),
+
+    // O mock vive em memória: uma conta cadastrada some ao recarregar o app, e o token dela passa a ser recusado.
+    refresh: (refreshToken) =>
+      respond(() => {
+        const account = refreshToken.startsWith(REFRESH_PREFIX)
+          ? accounts.get(refreshToken.slice(REFRESH_PREFIX.length).toLowerCase())
+          : undefined;
+        if (!account) {
+          throw new ApiError(401, 'identity.refreshToken.invalid', 'Unauthorized');
+        }
+        return sessionFor(account);
+      }),
+
+    logout: () =>
+      respond(() => {
+        current = null;
+      }),
+  };
+
+  const api: ApiClient = {
+    getMe: () =>
+      respond(() => {
+        if (!current) {
+          throw new ApiError(401, 'identity.session.invalid', 'Unauthorized');
+        }
+        return {
+          user: { id: current.id, email: current.email, role: 'Student' },
+          student: {
+            id: current.studentId,
+            name: current.name,
+            experimentalGroup: group === 'control' ? 'Control' : 'Diagnostic',
+          },
+        };
+      }),
+
     getTrail: () =>
       respond<Trail>(() => ({
         masteryThreshold: THRESHOLD,
@@ -371,4 +464,6 @@ export function createMockApi({
         };
       }),
   };
+
+  return { api, auth };
 }
