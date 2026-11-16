@@ -35,9 +35,22 @@ As três rodam no CI em todo pull request.
 
 ```
 src/
-└── app/          # rotas do Expo Router (todo arquivo aqui é uma tela)
-    ├── (auth)/   # login e cadastro
-    └── (app)/    # telas com sessão
-        └── (tabs)/   # abas Trilha e Revisão
+├── app/          # rotas do Expo Router (todo arquivo aqui é uma tela)
+│   ├── (auth)/   # login e cadastro
+│   ├── (app)/    # telas com sessão
+│   │   └── (tabs)/   # abas Trilha e Revisão
+│   └── dev/      # só em desenvolvimento: a galeria de componentes
+├── components/   # os componentes do design (Button, TopicCard, MathText...)
+├── lib/          # lógica sem tela (a marcação de frações)
+└── theme/        # tokens: cores, fontes, escala de texto, espaçamento
 __tests__/        # testes (fora de src/app, que só tem rotas)
 ```
+
+## Design
+
+O tema e os componentes seguem a folha "Tokens e componentes" do canvas. Com o app aberto em desenvolvimento, a rota
+`/dev/components` mostra todos eles nos seus estados.
+
+- **Cores e texto:** use os tokens de `@/theme` e o `AppText`, nunca cor ou tamanho soltos na tela.
+- **Frações:** no conteúdo, `{1/2}` vira uma fração desenhada pelo `MathText`. É a mesma marcação do conteúdo no back.
+- **Fontes:** Bricolage Grotesque e Instrument Sans vão empacotadas no app, carregadas antes da primeira tela.
