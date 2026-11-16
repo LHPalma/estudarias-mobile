@@ -17,6 +17,10 @@ type Props = {
 /** A trilha do aluno: o progresso geral, o aviso de revisões e os tópicos em ordem, ligados pela linha do caminho. */
 export function TrailView({ trail, studentName, onOpenTopic, onOpenMap, onOpenReviews }: Props) {
   const names = new Map(trail.topics.map((topic) => [topic.id, topic.name]));
+  // Quem ainda não respondeu nada não tem nota em nenhum tópico: a trilha aponta por onde começar.
+  const untouched =
+    trail.masteredTopics === 0 && trail.topics.every((topic) => topic.score === null);
+  const first = untouched ? trail.topics.find((topic) => topic.status === 'available') : undefined;
 
   return (
     <View style={styles.root}>
@@ -55,6 +59,26 @@ export function TrailView({ trail, studentName, onOpenTopic, onOpenMap, onOpenRe
           </Pressable>
         </View>
       </View>
+
+      {first ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Comece por aqui: ${first.name}`}
+          onPress={() => onOpenTopic(first.id)}
+          style={styles.start}
+        >
+          <View style={styles.fill}>
+            <AppText variant="overline" color="progressInk">
+              Comece por aqui
+            </AppText>
+            <AppText variant="heading">{first.name}</AppText>
+            <AppText variant="support" color="inkStrong">
+              Leia a primeira lição e responda os exercícios para ganhar sua primeira nota.
+            </AppText>
+          </View>
+          <Icon name="chevronRight" color={colors.progressInk} strokeWidth={2.4} />
+        </Pressable>
+      ) : null}
 
       {trail.dueReviews > 0 ? (
         <Pressable
@@ -172,6 +196,17 @@ const styles = StyleSheet.create({
     borderRadius: minTouchTarget / 2,
     borderWidth: 1,
     borderColor: colors.line,
+    backgroundColor: colors.surface,
+  },
+  fill: { flex: 1, gap: spacing.xs },
+  start: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    borderWidth: 2,
+    borderColor: colors.progress,
     backgroundColor: colors.surface,
   },
   reviews: {

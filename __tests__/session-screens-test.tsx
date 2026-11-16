@@ -52,7 +52,7 @@ describe('cadastro', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Criar conta e começar' }));
   }
 
-  it('cria a conta e já entra na trilha', async () => {
+  it('cria a conta, mostra as boas-vindas e segue para a trilha', async () => {
     // Arrange
     await openApp('/login');
 
@@ -60,6 +60,10 @@ describe('cadastro', () => {
     await register('Lucas', 'lucas@example.com', 'Senha@123');
 
     // Assert
+    await expectPath('/welcome');
+    expect(await screen.findByRole('header', { name: 'Boas-vindas, Lucas' })).toBeTruthy();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Começar' }));
     await expectPath('/trail');
     expect(await screen.findByText('Olá, Lucas')).toBeTruthy();
   });

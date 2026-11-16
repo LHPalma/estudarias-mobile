@@ -5,7 +5,8 @@ import type { TokenStorage } from './token-storage';
 
 export type SessionState =
   | { status: 'loading' }
-  | { status: 'signedIn'; user: SessionUser }
+  /** `isNew` marca quem acabou de criar a conta: o app mostra as boas-vindas antes da trilha. */
+  | { status: 'signedIn'; user: SessionUser; isNew?: boolean }
   /** `notice` diz por que o aluno está no login sem ter pedido para sair. */
   | { status: 'signedOut'; notice: 'expired' | 'offline' | null };
 
@@ -50,7 +51,7 @@ export class SessionManager {
   }
 
   async signUp(name: string, email: string, password: string): Promise<void> {
-    await this.start(await this.auth.register({ name, email, password }));
+    await this.start(await this.auth.register({ name, email, password }), true);
   }
 
   /** Sai neste aparelho. O servidor é avisado, mas a saída não depende dele: sem rede, o aluno sai do mesmo jeito. */
@@ -90,10 +91,10 @@ export class SessionManager {
     }
   }
 
-  private async start(session: AuthSession): Promise<void> {
+  private async start(session: AuthSession, isNew = false): Promise<void> {
     await this.storage.write(session.refreshToken);
     this.accessToken = session.accessToken;
-    this.setState({ status: 'signedIn', user: session.user });
+    this.setState({ status: 'signedIn', user: session.user, isNew });
   }
 
   private async end(notice: 'expired' | null): Promise<void> {
