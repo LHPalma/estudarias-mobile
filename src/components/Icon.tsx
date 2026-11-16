@@ -38,6 +38,12 @@ const PATHS = {
       <Path d="M8.5 6.4L15.5 7.6M7 8.4L11 15.6M17 10.4L13 15.6" />
     </>
   ),
+  user: (
+    <>
+      <Circle cx={12} cy={8} r={4} />
+      <Path d="M4 20a8 8 0 0 1 16 0" />
+    </>
+  ),
   arrowDown: <Path d="M12 5v14M6 13l6 6 6-6" />,
   arrowUp: <Path d="M12 19V5M6 11l6-6 6 6" />,
 } as const;

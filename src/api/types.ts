@@ -15,6 +15,13 @@ export type FeedbackKind = 'correct' | 'incorrect' | 'incorrectWithDiagnosis';
 
 export type ReviewRating = 'again' | 'hard' | 'good' | 'easy';
 
+// ---------- GET /me ----------
+
+export type Me = {
+  user: { id: string; email: string; role: string };
+  student: { id: string; name: string; experimentalGroup: string };
+};
+
 // ---------- GET /trail ----------
 
 export type TrailTopic = Linked & {
@@ -54,6 +61,21 @@ export type TopicDetail = Linked & {
   unlocks: TopicRef[];
   lessons: TopicLesson[];
 };
+
+// ---------- GET /topics/{id}/attempts ----------
+// Proposto: o endpoint ainda não está no contrato da API (issue #92 do back).
+
+export type TopicAttempt = {
+  attemptId: string;
+  exerciseId: string;
+  statement: string;
+  difficulty: Difficulty;
+  isCorrect: boolean;
+  answeredAt: string;
+};
+
+/** As respostas que entram na nota do tópico, da mais recente para a mais antiga. */
+export type TopicAttempts = Linked & { items: TopicAttempt[] };
 
 // ---------- GET /lessons/{id} ----------
 
@@ -104,6 +126,11 @@ export type DueCard = Linked & {
   answer: string;
   topic: TopicRef;
   nextReviewAt: string;
+  /**
+   * Se o cartão nasceu de um erro do aluno (e não de um cartão manual). Proposto: ainda não está no contrato da API; sem o
+   * campo, o app só não mostra o selo.
+   */
+  fromError?: boolean;
 };
 
 export type DueReviews = Linked & { count: number; items: DueCard[] };

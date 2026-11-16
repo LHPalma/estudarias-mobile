@@ -1,6 +1,9 @@
 import { Redirect } from 'expo-router';
 
-// Sem sessão ainda (#5), o app abre sempre no login.
+import { useSession } from '@/session';
+
+/** A entrada do app: quem tem sessão vai para a trilha; quem não tem, para o login. */
 export default function Index() {
-  return <Redirect href="/login" />;
+  const { state } = useSession();
+  return <Redirect href={state.status === 'signedIn' ? '/trail' : '/login'} />;
 }

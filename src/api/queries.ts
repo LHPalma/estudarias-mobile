@@ -4,11 +4,20 @@ import { useApi } from './ApiProvider';
 import type { AttemptRequest, DueReviews, ReviewRating } from './types';
 
 export const queryKeys = {
+  me: ['me'] as const,
   trail: ['trail'] as const,
   topic: (topicId: string) => ['topic', topicId] as const,
+  /** Começa pela chave do tópico: invalidar o tópico invalida o histórico junto. */
+  topicAttempts: (topicId: string) => ['topic', topicId, 'attempts'] as const,
   lesson: (lessonId: string) => ['lesson', lessonId] as const,
   dueReviews: ['reviews', 'due'] as const,
 };
+
+/** O perfil de quem está logado. Muda pouco, então fica em cache enquanto a sessão durar. */
+export function useMe() {
+  const api = useApi();
+  return useQuery({ queryKey: queryKeys.me, queryFn: () => api.getMe(), staleTime: Infinity });
+}
 
 export function useTrail() {
   const api = useApi();
@@ -18,6 +27,16 @@ export function useTrail() {
 export function useTopic(topicId: string) {
   const api = useApi();
   return useQuery({ queryKey: queryKeys.topic(topicId), queryFn: () => api.getTopic(topicId) });
+}
+
+/** As respostas que compõem a nota do tópico. Só busca quando `enabled` (um tópico bloqueado não tem histórico). */
+export function useTopicAttempts(topicId: string, enabled = true) {
+  const api = useApi();
+  return useQuery({
+    queryKey: queryKeys.topicAttempts(topicId),
+    queryFn: () => api.getTopicAttempts(topicId),
+    enabled,
+  });
 }
 
 export function useLesson(lessonId: string) {
