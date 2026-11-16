@@ -425,6 +425,7 @@ export function createMockBackend({
             answer: card.answer,
             topic: { id: card.topicId, name: topicById(card.topicId)?.name ?? '' },
             nextReviewAt: card.nextReviewAt.toISOString(),
+            fromError: card.errorType !== null,
             links: [link(`/reviews/${card.id}`, 'review', 'POST')],
           })),
           links: [link('/reviews/due', 'self'), link('/trail', 'trail')],

@@ -111,6 +111,11 @@ export type DueCard = Linked & {
   answer: string;
   topic: TopicRef;
   nextReviewAt: string;
+  /**
+   * Se o cartão nasceu de um erro do aluno (e não de um cartão manual). Proposto: ainda não está no contrato da API; sem o
+   * campo, o app só não mostra o selo.
+   */
+  fromError?: boolean;
 };
 
 export type DueReviews = Linked & { count: number; items: DueCard[] };
