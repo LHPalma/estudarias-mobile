@@ -8,6 +8,7 @@ import type {
   Lesson,
   Link,
   ReviewRating,
+  TopicAttempts,
   TopicDetail,
   TopicStatus,
   Trail,
@@ -29,7 +30,13 @@ export type MockOptions = {
   now?: () => Date;
 };
 
-type Answer = { difficulty: Difficulty; correct: boolean };
+type Answer = {
+  difficulty: Difficulty;
+  correct: boolean;
+  exerciseId?: string;
+  statement?: string;
+  answeredAt?: Date;
+};
 
 type Card = {
   id: string;
@@ -321,6 +328,40 @@ export function createMockBackend({
         };
       }),
 
+    getTopicAttempts: (topicId) =>
+      respond<TopicAttempts>(() => {
+        const topic = topicById(topicId);
+        if (!topic) {
+          throw new ApiError(404, 'trail.topic.notFound', 'Not found');
+        }
+        if (status(topic.id) === 'locked') {
+          throw new ApiError(403, 'student.topic.locked', 'Forbidden');
+        }
+        // As respostas com que o mock nasce não guardam o exercício: recebem os do tópico, em ordem, e datas de dias atrás.
+        const exercises = topic.lessons.flatMap((lesson) => lesson.exercises);
+        return {
+          items: (history.get(topic.id) ?? []).slice(0, WINDOW).map((answer, position) => {
+            const exercise =
+              exercises.find((candidate) => candidate.difficulty === answer.difficulty) ??
+              exercises[position % Math.max(1, exercises.length)];
+            return {
+              attemptId: mockId(8, 500 + position),
+              exerciseId: answer.exerciseId ?? exercise?.id ?? '',
+              statement: answer.statement ?? exercise?.statement ?? '',
+              difficulty: answer.difficulty,
+              isCorrect: answer.correct,
+              answeredAt: (
+                answer.answeredAt ?? new Date(start.getTime() - (position + 1) * DAY)
+              ).toISOString(),
+            };
+          }),
+          links: [
+            link(`/topics/${topic.id}/attempts`, 'self'),
+            link(`/topics/${topic.id}`, 'topic'),
+          ],
+        };
+      }),
+
     getLesson: (lessonId) =>
       respond<Lesson>(() => {
         const topic = TOPICS.find((candidate) =>
@@ -372,7 +413,13 @@ export function createMockBackend({
 
         const isCorrect = chosen.id === exercise.correct;
         history.set(topic.id, [
-          { difficulty: exercise.difficulty, correct: isCorrect },
+          {
+            difficulty: exercise.difficulty,
+            correct: isCorrect,
+            exerciseId: exercise.id,
+            statement: exercise.statement,
+            answeredAt: now(),
+          },
           ...(history.get(topic.id) ?? []),
         ]);
         const unlockedTopics = evaluateMastery(topic);

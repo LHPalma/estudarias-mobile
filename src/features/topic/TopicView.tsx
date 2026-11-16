@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { hasLink, type TopicDetail, type TopicStatus } from '@/api';
-import { AppText, Card, Icon, IconButton, ScoreBar } from '@/components';
+import { hasLink, type TopicAttempt, type TopicDetail, type TopicStatus } from '@/api';
+import { AppText, Card, Icon, IconButton, MathText, ScoreBar, StatusBadge } from '@/components';
 import { joinNames, plural, shownScore } from '@/lib/format';
+import { speakMath } from '@/lib/math-markup';
 import { colors, radius, spacing } from '@/theme';
 
 const STATUS_LABEL: Record<TopicStatus, string> = {
@@ -18,6 +19,8 @@ const STATUS_COLOR = {
 
 type Props = {
   topic: TopicDetail;
+  /** As respostas que compõem a nota, da mais recente para a mais antiga. Sem elas, a seção não aparece. */
+  attempts?: TopicAttempt[];
   onBack: () => void;
   onOpenLesson: (lessonId: string) => void;
 };
@@ -26,7 +29,7 @@ type Props = {
  * O tópico: a nota com a meta e o que falta para dominá-lo, e as lições. Um tópico bloqueado mostra os pré-requisitos que
  * faltam no lugar da nota. Uma lição só abre quando a API manda o link dela.
  */
-export function TopicView({ topic, onBack, onOpenLesson }: Props) {
+export function TopicView({ topic, attempts = [], onBack, onOpenLesson }: Props) {
   const locked = topic.status === 'locked';
 
   return (
@@ -120,6 +123,49 @@ export function TopicView({ topic, onBack, onOpenLesson }: Props) {
           );
         })}
       </View>
+
+      {attempts.length > 0 && !locked ? (
+        <>
+          <View style={styles.historyTitle}>
+            <AppText variant="heading" accessibilityRole="header">
+              Últimas respostas
+            </AppText>
+            <AppText variant="support" color="inkStrong">
+              A nota vem destas respostas. As mais recentes e as mais difíceis pesam mais.
+            </AppText>
+          </View>
+          <Card style={styles.history}>
+            {attempts.map((attempt, index) => (
+              <View
+                key={attempt.attemptId}
+                accessible
+                accessibilityLabel={`${attempt.isCorrect ? 'Acertou' : 'Errou'}: ${speakMath(attempt.statement)}`}
+                style={[styles.attempt, index > 0 && styles.attemptRule]}
+              >
+                <View
+                  style={[
+                    styles.result,
+                    attempt.isCorrect ? styles.resultRight : styles.resultWrong,
+                  ]}
+                >
+                  <Icon
+                    name={attempt.isCorrect ? 'check' : 'close'}
+                    size={16}
+                    color={colors.onStrong}
+                    strokeWidth={3}
+                  />
+                </View>
+                <View style={styles.fill}>
+                  <MathText variant="support" color="inkBody" fractionSize="sm">
+                    {attempt.statement}
+                  </MathText>
+                </View>
+                <StatusBadge kind={attempt.difficulty} />
+              </View>
+            ))}
+          </Card>
+        </>
+      ) : null}
     </View>
   );
 }
@@ -156,6 +202,24 @@ const styles = StyleSheet.create({
   hint: { marginTop: spacing.xs },
   lessonsTitle: { marginTop: spacing.sm },
   lessons: { gap: spacing.sm + 2 },
+  historyTitle: { gap: spacing.xs, marginTop: spacing.sm },
+  history: { gap: 0, paddingVertical: spacing.xs },
+  attempt: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  attemptRule: { borderTopWidth: 1, borderTopColor: colors.line },
+  result: {
+    width: 28,
+    height: 28,
+    borderRadius: radius.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  resultRight: { backgroundColor: colors.mastered },
+  resultWrong: { backgroundColor: colors.error },
   lesson: {
     minHeight: 64,
     flexDirection: 'row',

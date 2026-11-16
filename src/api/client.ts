@@ -7,6 +7,7 @@ import type {
   Me,
   ReviewRequest,
   ReviewResult,
+  TopicAttempts,
   TopicDetail,
   Trail,
 } from './types';
@@ -16,6 +17,7 @@ export type ApiClient = {
   getMe(): Promise<Me>;
   getTrail(): Promise<Trail>;
   getTopic(topicId: string): Promise<TopicDetail>;
+  getTopicAttempts(topicId: string): Promise<TopicAttempts>;
   getLesson(lessonId: string): Promise<Lesson>;
   submitAttempt(exerciseId: string, request: AttemptRequest): Promise<AttemptResult>;
   getDueReviews(): Promise<DueReviews>;
@@ -28,6 +30,7 @@ export function createHttpApi(http: Http): ApiClient {
     getMe: () => http.get('/me'),
     getTrail: () => http.get('/trail'),
     getTopic: (topicId) => http.get(`/topics/${id(topicId)}`),
+    getTopicAttempts: (topicId) => http.get(`/topics/${id(topicId)}/attempts`),
     getLesson: (lessonId) => http.get(`/lessons/${id(lessonId)}`),
     submitAttempt: (exerciseId, request) =>
       http.post(`/exercises/${id(exerciseId)}/attempts`, request),

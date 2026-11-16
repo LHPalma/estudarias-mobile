@@ -62,6 +62,21 @@ export type TopicDetail = Linked & {
   lessons: TopicLesson[];
 };
 
+// ---------- GET /topics/{id}/attempts ----------
+// Proposto: o endpoint ainda não está no contrato da API (issue #92 do back).
+
+export type TopicAttempt = {
+  attemptId: string;
+  exerciseId: string;
+  statement: string;
+  difficulty: Difficulty;
+  isCorrect: boolean;
+  answeredAt: string;
+};
+
+/** As respostas que entram na nota do tópico, da mais recente para a mais antiga. */
+export type TopicAttempts = Linked & { items: TopicAttempt[] };
+
 // ---------- GET /lessons/{id} ----------
 
 /** Uma alternativa sem o gabarito: nada aqui diz se ela é a correta. */
