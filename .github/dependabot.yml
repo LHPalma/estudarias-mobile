@@ -1,0 +1,51 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore
+      include: scope
+    # O Expo fixa as versões compatíveis com o SDK (npx expo install). Subir o SDK é uma tarefa própria, com
+    # npx expo install --fix; aqui só entram as atualizações que não mudam a versão maior.
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+    groups:
+      expo:
+        patterns:
+          - 'expo'
+          - 'expo-*'
+          - 'jest-expo'
+          - 'eslint-config-expo'
+          - 'react'
+          - 'react-dom'
+          - 'react-native'
+          - 'react-native-*'
+          - '@types/react'
+      tooling:
+        patterns:
+          - 'eslint*'
+          - 'prettier'
+          - 'jest'
+          - '@types/jest'
+          - '@testing-library/*'
+          - 'typescript'
+
+  # Mantém as actions do CI (checkout, setup-node) atualizadas.
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Sao_Paulo
+    commit-message:
+      prefix: chore
+      include: scope
