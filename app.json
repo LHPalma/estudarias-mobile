@@ -21,10 +21,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router",
-      "expo-status-bar"
-    ],
+    "plugins": ["expo-router", "expo-status-bar"],
     "scheme": "estudarias",
     "experiments": {
       "typedRoutes": true
