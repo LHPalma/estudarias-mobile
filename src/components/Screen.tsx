@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import { colors, spacing } from '@/theme';
@@ -23,14 +23,20 @@ export function Screen({
 }: Props) {
   return (
     <SafeAreaView edges={edges} style={[styles.root, { backgroundColor: background }]}>
-      {scroll ? (
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          {children}
-        </ScrollView>
-      ) : (
-        <View style={[styles.content, styles.fill]}>{children}</View>
-      )}
-      {footer ? <View style={styles.footer}>{footer}</View> : null}
+      {/* No iOS o teclado cobre a tela: o conteúdo e o rodapé sobem com ele. O Android já redimensiona a janela. */}
+      <KeyboardAvoidingView
+        style={styles.root}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        {scroll ? (
+          <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+            {children}
+          </ScrollView>
+        ) : (
+          <View style={[styles.content, styles.fill]}>{children}</View>
+        )}
+        {footer ? <View style={styles.footer}>{footer}</View> : null}
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -40,6 +46,7 @@ const styles = StyleSheet.create({
   fill: { flex: 1 },
   content: { padding: spacing.xl, gap: spacing.lg },
   footer: {
+    gap: spacing.sm,
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.md,
     paddingBottom: spacing.xl,

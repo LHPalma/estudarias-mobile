@@ -13,7 +13,7 @@ describe('<Button />', () => {
     await render(<Button label="Responder" onPress={onPress} />);
 
     // Act
-    fireEvent.press(screen.getByRole('button', { name: 'Responder' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Responder' }));
 
     // Assert
     expect(onPress).toHaveBeenCalledTimes(1);
@@ -26,7 +26,7 @@ describe('<Button />', () => {
     const button = screen.getByRole('button', { name: 'Responder' });
 
     // Act
-    fireEvent.press(button);
+    await fireEvent.press(button);
 
     // Assert
     expect(onPress).not.toHaveBeenCalled();
@@ -40,7 +40,7 @@ describe('<Button />', () => {
     const button = screen.getByRole('button', { name: 'Entrar' });
 
     // Act
-    fireEvent.press(button);
+    await fireEvent.press(button);
 
     // Assert
     expect(onPress).not.toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('<AlternativeOption />', () => {
     const option = screen.getByRole('radio', { name: 'Alternativa B: 5 sobre 6' });
 
     // Act
-    fireEvent.press(option);
+    await fireEvent.press(option);
 
     // Assert
     expect(option).toBeChecked();
@@ -107,7 +107,7 @@ describe('<AlternativeOption />', () => {
     const option = screen.getByRole('radio', { name: 'Alternativa B: 5 sobre 6, correta' });
 
     // Act
-    fireEvent.press(option);
+    await fireEvent.press(option);
 
     // Assert
     expect(onPress).not.toHaveBeenCalled();
@@ -153,7 +153,7 @@ describe('<TopicCard />', () => {
     );
 
     // Act
-    fireEvent.press(
+    await fireEvent.press(
       screen.getByRole('button', {
         name: 'Porcentagem, bloqueado. Requer Frações e Equações do 1º grau',
       }),
