@@ -20,3 +20,15 @@ describe('rotas iniciais', () => {
     expect(screen.getAllByText('Revisão').length).toBeGreaterThan(0);
   });
 });
+
+describe('galeria de componentes', () => {
+  it('abre em desenvolvimento, com os componentes', async () => {
+    // Arrange & Act
+    await renderRouter('./src/app', { initialUrl: '/dev/components' });
+
+    // Assert
+    expect(screen).toHavePathname('/dev/components');
+    expect(screen.getByRole('header', { name: 'Componentes' })).toBeTruthy();
+    expect(screen.getAllByRole('radio').length).toBe(8);
+  });
+});
