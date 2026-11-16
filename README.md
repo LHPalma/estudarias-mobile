@@ -21,6 +21,20 @@ npm start
 
 Leia o QR code com o Expo Go (Android) ou a câmera (iOS). Para abrir no navegador: `npm run web`.
 
+## Configuração
+
+As variáveis ficam num `.env.local` (fora do git); o `.env.example` traz um modelo. O Expo embute as `EXPO_PUBLIC_*` no app
+na hora do build, então reinicie o `npm start` depois de mudar uma.
+
+| Variável                 | Padrão                  | Para quê                                                                            |
+| ------------------------ | ----------------------- | ----------------------------------------------------------------------------------- |
+| `EXPO_PUBLIC_API_URL`    | `http://localhost:5007` | a API do back. No celular, use o IP da sua máquina na rede                          |
+| `EXPO_PUBLIC_API_MOCK`   | desligado               | `true` faz o app responder do modo mock, sem rede e sem o back                      |
+| `EXPO_PUBLIC_MOCK_GROUP` | `diagnostic`            | no modo mock, o grupo do aluno (`diagnostic` ou `control`), que muda a tela de erro |
+
+O **modo mock** segue o contrato e simula o ciclo com as regras do servidor (nota, domínio, desbloqueio e o flashcard criado
+pelo erro), com o conteúdo de Frações do protótipo. É o jeito de rodar o app enquanto os endpoints não existem no back.
+
 ## Verificações
 
 ```bash
@@ -40,6 +54,7 @@ src/
 │   ├── (app)/    # telas com sessão
 │   │   └── (tabs)/   # abas Trilha e Revisão
 │   └── dev/      # só em desenvolvimento: a galeria de componentes
+├── api/          # cliente da API, tipos do contrato, hooks e o modo mock
 ├── components/   # os componentes do design (Button, TopicCard, MathText...)
 ├── lib/          # lógica sem tela (a marcação de frações)
 └── theme/        # tokens: cores, fontes, escala de texto, espaçamento
