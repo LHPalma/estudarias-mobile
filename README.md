@@ -35,6 +35,18 @@ na hora do build, então reinicie o `npm start` depois de mudar uma.
 O **modo mock** segue o contrato e simula o ciclo com as regras do servidor (nota, domínio, desbloqueio e o flashcard criado
 pelo erro), com o conteúdo de Frações do protótipo. É o jeito de rodar o app enquanto os endpoints não existem no back.
 
+No modo mock já existe uma conta: **ana@example.com**, senha **Senha@123**. Também dá para cadastrar outra, que vale até
+recarregar o app (o mock vive em memória).
+
+## Sessão
+
+- O **access token** fica só em memória; o **refresh token** fica no cofre do sistema (`expo-secure-store`). No navegador,
+  que só serve para desenvolver, fica no `sessionStorage`.
+- Ao abrir, o app renova a sessão com o refresh token guardado e vai direto para a trilha; sem ele, vai para o login.
+- Num `401`, o cliente renova a sessão **uma vez** e repete a chamada. Chamadas simultâneas esperam a mesma renovação,
+  porque cada renovação troca o refresh token. Se o servidor recusar, o aluno volta ao login com o aviso "Sua sessão expirou".
+- As telas do grupo `(app)` só abrem com sessão; as do `(auth)` mandam para a trilha quem já entrou.
+
 ## Verificações
 
 ```bash
@@ -57,8 +69,11 @@ src/
 ├── api/          # cliente da API, tipos do contrato, hooks e o modo mock
 ├── components/   # os componentes do design (Button, TopicCard, MathText...)
 ├── lib/          # lógica sem tela (a marcação de frações)
+├── session/      # a sessão: tokens, renovação no 401 e o provider
+├── services.ts   # monta a API e a sessão (reais ou do modo mock)
 └── theme/        # tokens: cores, fontes, escala de texto, espaçamento
 __tests__/        # testes (fora de src/app, que só tem rotas)
+test-utils/       # apoio dos testes: abrir o app no modo mock, entrar, sessão guardada
 ```
 
 ## Design
