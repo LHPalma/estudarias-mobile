@@ -1,10 +1,18 @@
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { AppText, Button, Icon, Notice, Screen, TextField, type TextFieldRef } from '@/components';
+import {
+  AppText,
+  Button,
+  IconButton,
+  Notice,
+  Screen,
+  TextField,
+  type TextFieldRef,
+} from '@/components';
 import { authErrorMessage, useSession } from '@/session';
-import { colors, minTouchTarget, spacing } from '@/theme';
+import { spacing } from '@/theme';
 
 export default function RegisterScreen() {
   const { signUp } = useSession();
@@ -36,14 +44,7 @@ export default function RegisterScreen() {
       edges={['top', 'left', 'right', 'bottom']}
       footer={<Button label="Criar conta e começar" onPress={submit} loading={submitting} />}
     >
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Voltar para o login"
-        onPress={() => router.back()}
-        style={styles.back}
-      >
-        <Icon name="chevronLeft" color={colors.ink} strokeWidth={2.4} />
-      </Pressable>
+      <IconButton icon="chevronLeft" label="Voltar para o login" onPress={() => router.back()} />
 
       <View style={styles.heading}>
         <AppText variant="display" accessibilityRole="header">
@@ -96,15 +97,5 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  back: {
-    width: minTouchTarget,
-    height: minTouchTarget,
-    borderRadius: minTouchTarget / 2,
-    borderWidth: 1,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   heading: { gap: spacing.sm },
 });
