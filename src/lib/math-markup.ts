@@ -37,3 +37,13 @@ export function speakMath(source: string): string {
     )
     .join('');
 }
+
+/**
+ * Se a linha é só uma conta (`{1/2} + {1/3} = {5/6}`, `x + 3 = 7`), sem frase: a lição a mostra em destaque, centralizada.
+ * Uma conta não tem palavras, só números, sinais e letras soltas.
+ */
+export function isEquationLine(source: string): boolean {
+  const withoutFractions = source.replace(FRACTION, ' ').trim();
+  const hasMath = source.trim().length > 0 && /[=+−×÷\-]/.test(source);
+  return hasMath && !/\p{L}{2,}/u.test(withoutFractions);
+}
