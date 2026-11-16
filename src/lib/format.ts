@@ -14,3 +14,14 @@ export function joinNames(names: string[]): string {
 export function plural(count: number, one: string, many: string): string {
   return `${count} ${count === 1 ? one : many}`;
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Quando algo acontece, do jeito que se fala: "hoje", "amanhã" ou "em N dias". */
+export function whenLabel(isoDate: string, now: Date = new Date()): string {
+  const days = Math.round((new Date(isoDate).getTime() - now.getTime()) / DAY_MS);
+  if (days <= 0) {
+    return 'hoje';
+  }
+  return days === 1 ? 'amanhã' : `em ${days} dias`;
+}
