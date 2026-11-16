@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@testing-library/react-native": "^14.1.0",
+    "@types/jest": "30.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.7",
     "expo": "~58.0.25",
@@ -10,6 +12,8 @@
     "expo-linking": "~58.0.17",
     "expo-router": "~58.0.31",
     "expo-status-bar": "~58.0.5",
+    "jest": "~30.5.2",
+    "jest-expo": "~58.0.14",
     "prettier": "^3.10.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -31,7 +35,12 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watchAll"
   },
-  "private": true
+  "private": true,
+  "jest": {
+    "preset": "jest-expo"
+  }
 }
