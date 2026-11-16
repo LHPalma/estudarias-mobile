@@ -92,8 +92,8 @@ describe('sair', () => {
   it('volta ao login e não deixa a sessão guardada', async () => {
     // Arrange
     await rememberSession();
-    await openApp('/');
-    await expectPath('/trail');
+    await openApp('/account');
+    expect(await screen.findByText('ana@example.com')).toBeTruthy();
 
     // Act
     await fireEvent.press(await screen.findByRole('button', { name: 'Sair da conta' }));

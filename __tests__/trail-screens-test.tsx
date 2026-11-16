@@ -87,7 +87,6 @@ describe('trilha', () => {
         onOpenTopic={jest.fn()}
         onOpenMap={jest.fn()}
         onOpenReviews={jest.fn()}
-        onSignOut={jest.fn()}
       />,
     );
 

@@ -42,6 +42,13 @@ export default function TabsLayout() {
           tabBarBadge: dueReviews > 0 ? dueReviews : undefined,
         }}
       />
+      <Tabs.Screen
+        name="account"
+        options={{
+          title: 'Conta',
+          tabBarIcon: ({ focused }) => <TabIcon name="user" focused={focused} />,
+        }}
+      />
     </Tabs>
   );
 }

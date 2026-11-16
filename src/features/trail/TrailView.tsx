@@ -12,38 +12,18 @@ type Props = {
   onOpenTopic: (topicId: string) => void;
   onOpenMap: () => void;
   onOpenReviews: () => void;
-  onSignOut: () => void;
 };
 
 /** A trilha do aluno: o progresso geral, o aviso de revisões e os tópicos em ordem, ligados pela linha do caminho. */
-export function TrailView({
-  trail,
-  studentName,
-  onOpenTopic,
-  onOpenMap,
-  onOpenReviews,
-  onSignOut,
-}: Props) {
+export function TrailView({ trail, studentName, onOpenTopic, onOpenMap, onOpenReviews }: Props) {
   const names = new Map(trail.topics.map((topic) => [topic.id, topic.name]));
 
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <View style={styles.greeting}>
-          <AppText variant="support" color="inkSoft">
-            {studentName ? `Olá, ${studentName}` : ' '}
-          </AppText>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Sair da conta"
-            onPress={onSignOut}
-            hitSlop={12}
-          >
-            <AppText variant="label" color="inkSoft">
-              Sair
-            </AppText>
-          </Pressable>
-        </View>
+        <AppText variant="support" color="inkSoft">
+          {studentName ? `Olá, ${studentName}` : ' '}
+        </AppText>
         <AppText variant="display" accessibilityRole="header">
           Matemática básica
         </AppText>
@@ -167,7 +147,6 @@ function Marker({ status, number }: { status: TrailTopic['status']; number: numb
 const styles = StyleSheet.create({
   root: { gap: spacing.xl - 4 },
   header: { gap: spacing.xs },
-  greeting: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   progressRow: {
     flexDirection: 'row',
     alignItems: 'center',

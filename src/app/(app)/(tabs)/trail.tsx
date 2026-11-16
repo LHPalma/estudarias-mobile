@@ -3,10 +3,8 @@ import { router } from 'expo-router';
 import { useMe, useTrail } from '@/api';
 import { ErrorState, Screen, Skeleton } from '@/components';
 import { TrailView } from '@/features/trail/TrailView';
-import { useSession } from '@/session';
 
 export default function TrailScreen() {
-  const { signOut } = useSession();
   const me = useMe();
   const trail = useTrail();
 
@@ -21,7 +19,6 @@ export default function TrailScreen() {
           }
           onOpenMap={() => router.push('/map')}
           onOpenReviews={() => router.navigate('/review')}
-          onSignOut={signOut}
         />
       ) : trail.isError ? (
         <ErrorState error={trail.error} onRetry={trail.refetch} />
