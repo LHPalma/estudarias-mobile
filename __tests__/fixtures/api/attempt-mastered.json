@@ -1,0 +1,41 @@
+{
+  "attemptId": "01a20916-047c-7886-a540-fb4ac5fcaea2",
+  "isCorrect": true,
+  "correctAlternativeId": "01a2090d-816b-7f0b-a73a-693fe38f7786",
+  "feedback": {
+    "kind": "correct",
+    "correctAnswer": "42",
+    "errorType": null
+  },
+  "topic": {
+    "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+    "status": "mastered",
+    "score": 83.9,
+    "attemptCount": 5
+  },
+  "lesson": {
+    "id": "01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+    "status": "inProgress",
+    "completedExercises": 1,
+    "totalExercises": 2
+  },
+  "unlockedTopics": [
+    {
+      "id": "01a2090d-80e2-728d-bc31-e28275dab5e6",
+      "name": "Frações"
+    }
+  ],
+  "flashcard": null,
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "reviews",
+      "method": "GET"
+    }
+  ]
+}

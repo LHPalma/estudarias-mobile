@@ -1,0 +1,56 @@
+{
+  "items": [
+    {
+      "attemptId": "01a20916-047c-7886-a540-fb4ac5fcaea2",
+      "exerciseId": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "isCorrect": true,
+      "answeredAt": "2026-11-23T15:46:07.612675+00:00"
+    },
+    {
+      "attemptId": "01a20916-043c-7e9c-9c64-70687f72aed2",
+      "exerciseId": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "isCorrect": true,
+      "answeredAt": "2026-11-23T15:46:07.548505+00:00"
+    },
+    {
+      "attemptId": "01a20916-03f6-797d-8253-30965bd2e9e1",
+      "exerciseId": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "isCorrect": true,
+      "answeredAt": "2026-11-23T15:46:07.478744+00:00"
+    },
+    {
+      "attemptId": "01a20916-03a7-7600-8164-0596725e5714",
+      "exerciseId": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "isCorrect": true,
+      "answeredAt": "2026-11-23T15:46:07.399203+00:00"
+    },
+    {
+      "attemptId": "01a20916-0320-7fc2-a36b-3914ced9d082",
+      "exerciseId": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "isCorrect": false,
+      "answeredAt": "2026-11-23T15:46:07.264234+00:00"
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d/attempts",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    }
+  ]
+}

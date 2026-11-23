@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+  "title": "Validation error",
+  "status": 400,
+  "detail": "Review rating is not valid.",
+  "code": "studentFlashcard.rating.invalid",
+  "traceId": "trace"
+}

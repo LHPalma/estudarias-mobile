@@ -1,0 +1,16 @@
+{
+  "count": 0,
+  "items": [],
+  "links": [
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/trail",
+      "rel": "trail",
+      "method": "GET"
+    }
+  ]
+}

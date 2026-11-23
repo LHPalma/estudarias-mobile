@@ -48,6 +48,19 @@ pelo erro), com o conteúdo de Frações do protótipo. É o jeito de rodar o ap
 No modo mock já existe uma conta: **ana@example.com**, senha **Senha@123**. Também dá para cadastrar outra, que vale até
 recarregar o app (o mock vive em memória).
 
+### O mock acompanha o contrato da API
+
+O teste `__tests__/api-contract-test.ts` compara o **formato** das respostas do mock (campos, tipos e links) com respostas reais
+da API, gravadas em `__tests__/fixtures/api/`. Os valores não contam, só o formato. Quando o back mudar o contrato, grave as
+respostas de novo, e o teste mostra o que o mock precisa acompanhar:
+
+```bash
+API_URL=http://localhost:5007 DATABASE_URL=postgresql://usuario:senha@localhost/banco node scripts/record-api-contract.mjs
+```
+
+O script precisa da API no ar com o conteúdo carregado (veja o README do back) e do `psql` no PATH: ele põe o aluno no grupo certo
+e faz um cartão de revisão vencer direto no banco. As respostas gravadas não guardam token, e-mail nem `traceId`.
+
 ## Sessão
 
 - O **access token** fica só em memória; o **refresh token** fica no cofre do sistema (`expo-secure-store`). No navegador,

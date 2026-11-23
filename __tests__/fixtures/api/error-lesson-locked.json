@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.4",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "The topic is locked: master its prerequisites first.",
+  "code": "student.topic.locked",
+  "traceId": "trace"
+}

@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+  "title": "Not found",
+  "status": 404,
+  "detail": "The review card does not exist.",
+  "code": "review.card.notFound",
+  "traceId": "trace"
+}
