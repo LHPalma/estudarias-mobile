@@ -21,6 +21,16 @@ npm start
 
 Leia o QR code com o Expo Go (Android) ou a câmera (iOS). Para abrir no navegador: `npm run web`.
 
+## Demonstração no navegador
+
+O app, em modo mock, está publicado no GitHub Pages: **<https://lhpalma.github.io/estudarias-mobile/>**. Não precisa instalar nada. Entre com **ana@example.com** e a senha **Senha@123**, ou cadastre outra conta.
+
+- É o **modo mock** (veja Configuração): não há back por trás, e os dados vivem em memória e voltam ao começo ao recarregar a página. A sessão fica no `sessionStorage` da aba.
+- O site é reconstruído e publicado a cada merge na `main` pelo workflow [`pages.yml`](.github/workflows/pages.yml), com `EXPO_PUBLIC_API_MOCK=true`. Em todo pull request o mesmo export roda sem publicar, para um erro de build aparecer antes do merge.
+- O endereço tem o prefixo `/estudarias-mobile` (`experiments.baseUrl` no `app.json`), que só vale no export: `npm start` e `npm run web` seguem na raiz. O Pages não reescreve rotas, então o workflow copia o `index.html` para `404.html`, e o app abre em qualquer caminho (um link direto para `/estudarias-mobile/trail`, por exemplo), mesmo que o servidor responda `404` nele.
+- Para reproduzir o build local: `EXPO_PUBLIC_API_MOCK=true npx expo export --platform web` gera a pasta `dist/`.
+- Ligar o Pages num fork ou num repositório novo pede uma vez: Settings, Pages, Source: **GitHub Actions**.
+
 ## Configuração
 
 As variáveis ficam num `.env.local` (fora do git); o `.env.example` traz um modelo. O Expo embute as `EXPO_PUBLIC_*` no app
