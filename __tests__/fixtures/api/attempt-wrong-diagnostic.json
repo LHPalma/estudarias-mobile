@@ -1,0 +1,42 @@
+{
+  "attemptId": "01a20916-0320-7fc2-a36b-3914ced9d082",
+  "isCorrect": false,
+  "correctAlternativeId": "01a2090d-816b-7f0b-a73a-693fe38f7786",
+  "feedback": {
+    "kind": "incorrectWithDiagnosis",
+    "correctAnswer": "42",
+    "errorType": {
+      "name": "Esquece o \"vai um\"",
+      "feedback": "Quando a soma de uma coluna passa de 9, a dezena \"vai um\" para a coluna da esquerda."
+    }
+  },
+  "topic": {
+    "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+    "status": "available",
+    "score": 0,
+    "attemptCount": 1
+  },
+  "lesson": {
+    "id": "01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+    "status": "inProgress",
+    "completedExercises": 0,
+    "totalExercises": 2
+  },
+  "unlockedTopics": [],
+  "flashcard": {
+    "id": "01a20916-032a-7818-9d62-0efa2fcd1ce3",
+    "nextReviewAt": "2026-11-24T15:46:07.2747537+00:00"
+  },
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "reviews",
+      "method": "GET"
+    }
+  ]
+}

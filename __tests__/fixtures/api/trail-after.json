@@ -1,0 +1,56 @@
+{
+  "masteryThreshold": 70,
+  "masteredTopics": 1,
+  "totalTopics": 2,
+  "dueReviews": 0,
+  "topics": [
+    {
+      "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "slug": "operacoes-basicas",
+      "name": "Operações básicas",
+      "status": "mastered",
+      "score": 83.9,
+      "prerequisites": [],
+      "completedLessons": 0,
+      "totalLessons": 1,
+      "links": [
+        {
+          "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+          "rel": "topic",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "id": "01a2090d-80e2-728d-bc31-e28275dab5e6",
+      "slug": "fracoes",
+      "name": "Frações",
+      "status": "available",
+      "score": null,
+      "prerequisites": [
+        "01a2090d-8112-7230-a91c-636f7bdd5c6d"
+      ],
+      "completedLessons": 0,
+      "totalLessons": 3,
+      "links": [
+        {
+          "href": "http://localhost:5007/topics/01a2090d-80e2-728d-bc31-e28275dab5e6",
+          "rel": "topic",
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:5007/trail",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "reviews",
+      "method": "GET"
+    }
+  ]
+}

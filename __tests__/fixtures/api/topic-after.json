@@ -1,0 +1,51 @@
+{
+  "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+  "slug": "operacoes-basicas",
+  "name": "Operações básicas",
+  "status": "mastered",
+  "score": 83.9,
+  "attemptCount": 5,
+  "masteryThreshold": 70,
+  "minAttempts": 5,
+  "prerequisites": [],
+  "unlocks": [
+    {
+      "id": "01a2090d-80e2-728d-bc31-e28275dab5e6",
+      "name": "Frações"
+    }
+  ],
+  "lessons": [
+    {
+      "id": "01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+      "order": 1,
+      "title": "Soma e subtração com reserva",
+      "status": "inProgress",
+      "completedExercises": 1,
+      "totalExercises": 2,
+      "links": [
+        {
+          "href": "http://localhost:5007/lessons/01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+          "rel": "lesson",
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/trail",
+      "rel": "trail",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d/attempts",
+      "rel": "attempts",
+      "method": "GET"
+    }
+  ]
+}

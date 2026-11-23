@@ -1,0 +1,11 @@
+{
+  "id": "01a20916-032a-7818-9d62-0efa2fcd1ce3",
+  "nextReviewAt": "2026-11-24T15:46:07.7141487+00:00",
+  "links": [
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "reviews",
+      "method": "GET"
+    }
+  ]
+}

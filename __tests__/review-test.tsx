@@ -35,7 +35,7 @@ beforeEach(async () => {
 });
 
 describe('revisão', () => {
-  it('mostra o primeiro cartão com o tópico, o selo de erro e quantos faltam', async () => {
+  it('mostra o primeiro cartão com o tópico e quantos faltam, sem selo de origem', async () => {
     // Act
     await openApp('/review');
 
@@ -43,7 +43,8 @@ describe('revisão', () => {
     expect(await screen.findByLabelText(ERROR_CARD)).toBeTruthy();
     expect(screen.getByText('Faltam 2 cartões')).toBeTruthy();
     expect(screen.getByText('Frações')).toBeTruthy();
-    expect(screen.getByText('Gerado por um erro seu')).toBeTruthy();
+    // A API não diz de onde o cartão veio (hoje todo cartão nasce de um erro), então o app não mostra o selo.
+    expect(screen.queryByText('Gerado por um erro seu')).toBeNull();
     expect(screen.queryByText('Resposta')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Bom' })).toBeNull();
   });

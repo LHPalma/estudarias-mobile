@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import { hasLink, type TopicAttempt, type TopicDetail, type TopicStatus } from '@/api';
 import { AppText, Card, Icon, IconButton, MathText, ScoreBar, StatusBadge } from '@/components';
-import { joinNames, plural, shownScore } from '@/lib/format';
+import { joinNames, lessonProgressLabel, plural, shownScore } from '@/lib/format';
 import { speakMath } from '@/lib/math-markup';
 import { colors, radius, spacing } from '@/theme';
 
@@ -19,7 +19,7 @@ const STATUS_COLOR = {
 
 type Props = {
   topic: TopicDetail;
-  /** As respostas que compõem a nota, da mais recente para a mais antiga. Sem elas, a seção não aparece. */
+  /** As respostas que compõem a nota, da mais recente para a mais antiga. Sem elas, a seção não aparece (a tela só as busca quando a API manda o link `attempts`). */
   attempts?: TopicAttempt[];
   onBack: () => void;
   onOpenLesson: (lessonId: string) => void;
@@ -96,11 +96,16 @@ export function TopicView({ topic, attempts = [], onBack, onOpenLesson }: Props)
       <View style={styles.lessons}>
         {topic.lessons.map((lesson) => {
           const open = hasLink(lesson, 'lesson');
+          const progress = lessonProgressLabel(
+            lesson.status,
+            lesson.completedExercises,
+            lesson.totalExercises,
+          );
           return (
             <Pressable
               key={lesson.id}
               accessibilityRole="button"
-              accessibilityLabel={`Lição ${lesson.order}: ${lesson.title}${open ? '' : ', bloqueada'}`}
+              accessibilityLabel={`Lição ${lesson.order}: ${lesson.title}${open ? `, ${progress.toLowerCase()}` : ', bloqueada'}`}
               accessibilityState={{ disabled: !open }}
               disabled={!open}
               onPress={() => onOpenLesson(lesson.id)}
@@ -111,9 +116,19 @@ export function TopicView({ topic, attempts = [], onBack, onOpenLesson }: Props)
                   {lesson.order}
                 </AppText>
               </View>
-              <AppText variant="bodyStrong" color={open ? 'ink' : 'inkStrong'} style={styles.fill}>
-                {lesson.title}
-              </AppText>
+              <View style={styles.fill}>
+                <AppText variant="bodyStrong" color={open ? 'ink' : 'inkStrong'}>
+                  {lesson.title}
+                </AppText>
+                {open ? (
+                  <AppText
+                    variant="support"
+                    color={lesson.status === 'completed' ? 'masteredInk' : 'inkSoft'}
+                  >
+                    {progress}
+                  </AppText>
+                ) : null}
+              </View>
               {open ? (
                 <Icon name="chevronRight" color={colors.inkSoft} strokeWidth={2.4} />
               ) : (
@@ -124,7 +139,7 @@ export function TopicView({ topic, attempts = [], onBack, onOpenLesson }: Props)
         })}
       </View>
 
-      {attempts.length > 0 && !locked ? (
+      {attempts.length > 0 ? (
         <>
           <View style={styles.historyTitle}>
             <AppText variant="heading" accessibilityRole="header">

@@ -62,7 +62,7 @@ describe('exercício', () => {
     // Arrange
     await openApp(`/topics/${FRACTIONS}`);
     await fireEvent.press(
-      await screen.findByRole('button', { name: 'Lição 2: Soma com denominadores diferentes' }),
+      await screen.findByRole('button', { name: /^Lição 2: Soma com denominadores diferentes/ }),
     );
     await fireEvent.press(await screen.findByRole('button', { name: 'Praticar · 3 exercícios' }));
 
@@ -233,15 +233,42 @@ describe('fim de lição', () => {
     await answer('Alternativa D: 11 sobre 12');
     await proceed();
 
-    // Assert
-    expect(await screen.findByText('Lição concluída')).toBeTruthy();
+    // Assert: errou um exercício, então a lição ainda não está concluída (quem diz é a API)
+    expect(await screen.findByText('Fim da prática')).toBeTruthy();
+    expect(screen.queryByText('Lição concluída')).toBeNull();
     expect(screen.getByLabelText('Acertos: 2 de 3')).toBeTruthy();
+    expect(screen.getByLabelText('Exercícios da lição acertados: 2 de 3')).toBeTruthy();
+    expect(
+      screen.getByText(
+        'Acerte cada exercício da lição pelo menos uma vez para concluí-la. Você pode refazê-la.',
+      ),
+    ).toBeTruthy();
     expect(screen.getByLabelText(/^Nota do tópico: \d+$/)).toBeTruthy();
     expect(screen.getByLabelText('Flashcards novos: 1 cartão')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Revisar flashcards' })).toBeTruthy();
 
     await fireEvent.press(screen.getByRole('button', { name: 'Voltar para a trilha' }));
     await expectPath('/trail');
+  });
+
+  it('só diz "Lição concluída" quando todos os exercícios da lição foram acertados', async () => {
+    // Arrange
+    await openApp(PRACTICE);
+    await answer('Alternativa B: 5 sobre 6');
+    await proceed();
+    await answer('Alternativa C: 5 sobre 6');
+    await proceed();
+
+    // Act
+    await answer('Alternativa D: 11 sobre 12');
+    await proceed();
+
+    // Assert
+    expect(await screen.findByText('Lição concluída')).toBeTruthy();
+    expect(screen.queryByText('Fim da prática')).toBeNull();
+    expect(screen.getByLabelText('Acertos: 3 de 3')).toBeTruthy();
+    expect(screen.getByLabelText('Exercícios da lição acertados: 3 de 3')).toBeTruthy();
+    expect(screen.queryByText(/Acerte cada exercício da lição/)).toBeNull();
   });
 
   it('sair no meio e voltar retoma do primeiro exercício não respondido', async () => {

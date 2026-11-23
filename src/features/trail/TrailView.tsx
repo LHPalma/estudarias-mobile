@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { Trail, TrailTopic } from '@/api';
 import { AppText, Icon, TopicCard } from '@/components';
-import { joinNames, plural } from '@/lib/format';
+import { joinNames, lessonsSummary, plural } from '@/lib/format';
 import { colors, fonts, minTouchTarget, radius, spacing } from '@/theme';
 
 type Props = {
@@ -119,6 +119,11 @@ export function TrailView({ trail, studentName, onOpenTopic, onOpenMap, onOpenRe
                   status={topic.status}
                   score={topic.score}
                   goal={trail.masteryThreshold}
+                  detail={
+                    topic.totalLessons > 0
+                      ? lessonsSummary(topic.completedLessons, topic.totalLessons)
+                      : undefined
+                  }
                   requires={
                     topic.prerequisites.length > 0
                       ? `Requer ${joinNames(topic.prerequisites.map((id) => names.get(id) ?? ''))}`

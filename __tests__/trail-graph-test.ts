@@ -1,4 +1,4 @@
-import { joinNames, plural, shownScore } from '@/lib/format';
+import { joinNames, lessonProgressLabel, lessonsSummary, plural, shownScore } from '@/lib/format';
 import { layoutTrail } from '@/lib/trail-graph';
 
 describe('layoutTrail', () => {
@@ -87,5 +87,18 @@ describe('formatação', () => {
   it('escolhe singular ou plural pela quantidade', () => {
     expect(plural(1, 'flashcard', 'flashcards')).toBe('1 flashcard');
     expect(plural(2, 'flashcard', 'flashcards')).toBe('2 flashcards');
+  });
+
+  it('escreve as lições concluídas, no singular e no plural', () => {
+    expect(lessonsSummary(0, 1)).toBe('0 de 1 lição concluída');
+    expect(lessonsSummary(1, 2)).toBe('1 de 2 lições concluídas');
+  });
+
+  it('diz o que o aluno já fez em cada lição', () => {
+    expect(lessonProgressLabel('completed', 3, 3)).toBe('Concluída');
+    expect(lessonProgressLabel('inProgress', 1, 3)).toBe('1 de 3 exercícios acertados');
+    expect(lessonProgressLabel('inProgress', 0, 1)).toBe('0 de 1 exercício acertado');
+    expect(lessonProgressLabel('notStarted', 0, 2)).toBe('2 exercícios');
+    expect(lessonProgressLabel('notStarted', 0, 0)).toBe('Sem exercícios');
   });
 });

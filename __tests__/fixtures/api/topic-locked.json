@@ -1,0 +1,59 @@
+{
+  "id": "01a2090d-80e2-728d-bc31-e28275dab5e6",
+  "slug": "fracoes",
+  "name": "Frações",
+  "status": "locked",
+  "score": null,
+  "attemptCount": 0,
+  "masteryThreshold": 70,
+  "minAttempts": 5,
+  "prerequisites": [
+    {
+      "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "name": "Operações básicas",
+      "status": "available"
+    }
+  ],
+  "unlocks": [],
+  "lessons": [
+    {
+      "id": "01a2090d-8130-75f4-9b59-b45d47ec4cbc",
+      "order": 1,
+      "title": "O que é uma fração",
+      "status": "notStarted",
+      "completedExercises": 0,
+      "totalExercises": 2,
+      "links": []
+    },
+    {
+      "id": "01a2090d-815c-78c0-8a59-1909b6dbd203",
+      "order": 2,
+      "title": "Frações equivalentes",
+      "status": "notStarted",
+      "completedExercises": 0,
+      "totalExercises": 2,
+      "links": []
+    },
+    {
+      "id": "01a2090d-815d-7928-8ede-41fb74035ce1",
+      "order": 3,
+      "title": "Soma de frações com denominadores diferentes",
+      "status": "notStarted",
+      "completedExercises": 0,
+      "totalExercises": 3,
+      "links": []
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-80e2-728d-bc31-e28275dab5e6",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/trail",
+      "rel": "trail",
+      "method": "GET"
+    }
+  ]
+}

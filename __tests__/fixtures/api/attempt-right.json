@@ -1,0 +1,36 @@
+{
+  "attemptId": "01a20916-03a7-7600-8164-0596725e5714",
+  "isCorrect": true,
+  "correctAlternativeId": "01a2090d-816b-7f0b-a73a-693fe38f7786",
+  "feedback": {
+    "kind": "correct",
+    "correctAnswer": "42",
+    "errorType": null
+  },
+  "topic": {
+    "id": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+    "status": "available",
+    "score": 52.6,
+    "attemptCount": 2
+  },
+  "lesson": {
+    "id": "01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+    "status": "inProgress",
+    "completedExercises": 1,
+    "totalExercises": 2
+  },
+  "unlockedTopics": [],
+  "flashcard": null,
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/reviews/due",
+      "rel": "reviews",
+      "method": "GET"
+    }
+  ]
+}

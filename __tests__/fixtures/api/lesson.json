@@ -1,0 +1,73 @@
+{
+  "id": "01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+  "topicId": "01a2090d-8112-7230-a91c-636f7bdd5c6d",
+  "order": 1,
+  "title": "Soma e subtração com reserva",
+  "content": "Na soma, quando uma coluna passa de 9, a dezena \"vai um\" para a coluna da esquerda: 27 + 15 = 42.\nNa subtração, quando o algarismo de cima é menor, ele pega uma dezena emprestada da coluna da esquerda: 52 − 17 = 35.\n",
+  "exercises": [
+    {
+      "id": "01a2090d-816b-7a0d-970d-bbb6d914d0f1",
+      "statement": "Quanto é 27 + 15?",
+      "difficulty": "easy",
+      "alternatives": [
+        {
+          "id": "01a2090d-816b-7f0b-a73a-693fe38f7786",
+          "text": "42"
+        },
+        {
+          "id": "01a2090d-816b-738f-be40-7c11543ee7e4",
+          "text": "32"
+        },
+        {
+          "id": "01a2090d-816b-71ad-8c7f-db4cf36dde75",
+          "text": "12"
+        }
+      ],
+      "links": [
+        {
+          "href": "http://localhost:5007/exercises/01a2090d-816b-7a0d-970d-bbb6d914d0f1/attempts",
+          "rel": "answer",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "id": "01a2090d-816b-7a73-aeb9-ca3304af73db",
+      "statement": "Quanto é 52 − 17?",
+      "difficulty": "easy",
+      "alternatives": [
+        {
+          "id": "01a2090d-816b-735c-a6aa-f14f7202b61b",
+          "text": "35"
+        },
+        {
+          "id": "01a2090d-816b-7945-9a10-0ff831276c93",
+          "text": "45"
+        },
+        {
+          "id": "01a2090d-816b-7054-9858-2de5d7592957",
+          "text": "69"
+        }
+      ],
+      "links": [
+        {
+          "href": "http://localhost:5007/exercises/01a2090d-816b-7a73-aeb9-ca3304af73db/attempts",
+          "rel": "answer",
+          "method": "POST"
+        }
+      ]
+    }
+  ],
+  "links": [
+    {
+      "href": "http://localhost:5007/lessons/01a2090d-816b-7ef0-afbb-91f13a9b9f7b",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    }
+  ]
+}

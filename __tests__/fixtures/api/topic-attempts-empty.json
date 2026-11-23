@@ -1,0 +1,15 @@
+{
+  "items": [],
+  "links": [
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d/attempts",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "http://localhost:5007/topics/01a2090d-8112-7230-a91c-636f7bdd5c6d",
+      "rel": "topic",
+      "method": "GET"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+  "title": "Validation error",
+  "status": 400,
+  "detail": "The chosen alternative does not belong to the exercise.",
+  "code": "answer.alternative.notInExercise",
+  "traceId": "trace"
+}

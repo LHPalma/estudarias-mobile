@@ -33,6 +33,14 @@ describe('trilha', () => {
     ).toBeTruthy();
   });
 
+  it('o tópico em andamento mostra quantas lições já foram concluídas', async () => {
+    // Act
+    await openApp('/trail');
+
+    // Assert
+    expect(await screen.findByText('1 de 2 lições concluídas')).toBeTruthy();
+  });
+
   it('tocar num tópico abre o tópico', async () => {
     // Arrange
     await openApp('/trail');
@@ -73,6 +81,8 @@ describe('trilha', () => {
           status: 'available',
           score: null,
           prerequisites: [],
+          completedLessons: 0,
+          totalLessons: 0,
           links: [],
         },
       ],

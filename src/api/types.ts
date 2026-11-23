@@ -11,6 +11,13 @@ export type TopicStatus = 'locked' | 'available' | 'mastered';
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+/**
+ * O estado de uma lição para o aluno, derivado das tentativas dele: `completed` é ter acertado cada exercício da lição pelo menos
+ * uma vez (errar depois não desfaz), `inProgress` é ter tentado sem ter acertado todos, e `notStarted` é não ter tentado nenhum
+ * (e também a lição sem exercícios). Concluir a lição não domina o tópico: quem libera a trilha é a nota.
+ */
+export type LessonStatus = 'notStarted' | 'inProgress' | 'completed';
+
 export type FeedbackKind = 'correct' | 'incorrect' | 'incorrectWithDiagnosis';
 
 export type ReviewRating = 'again' | 'hard' | 'good' | 'easy';
@@ -32,6 +39,9 @@ export type TrailTopic = Linked & {
   /** De 0 a 100, com uma casa, arredondada para baixo; nula sem nenhuma resposta. */
   score: number | null;
   prerequisites: string[];
+  /** Quantas lições do tópico o aluno concluiu, de quantas (`totalLessons`). */
+  completedLessons: number;
+  totalLessons: number;
 };
 
 export type Trail = Linked & {
@@ -46,7 +56,15 @@ export type Trail = Linked & {
 
 export type TopicRef = { id: string; name: string };
 
-export type TopicLesson = Linked & { id: string; order: number; title: string };
+export type TopicLesson = Linked & {
+  id: string;
+  order: number;
+  title: string;
+  status: LessonStatus;
+  /** Os exercícios da lição que o aluno já acertou, de `totalExercises`. */
+  completedExercises: number;
+  totalExercises: number;
+};
 
 export type TopicDetail = Linked & {
   id: string;
@@ -63,7 +81,7 @@ export type TopicDetail = Linked & {
 };
 
 // ---------- GET /topics/{id}/attempts ----------
-// Proposto: o endpoint ainda não está no contrato da API (issue #92 do back).
+// O histórico que compõe a nota: o link `attempts` do tópico só existe quando ele está liberado.
 
 export type TopicAttempt = {
   attemptId: string;
@@ -114,6 +132,8 @@ export type AttemptResult = Linked & {
   correctAlternativeId: string;
   feedback: AttemptFeedback;
   topic: { id: string; status: TopicStatus; score: number | null; attemptCount: number };
+  /** A lição do exercício, já com esta resposta: é o que decide o "Lição concluída" do fim da prática. */
+  lesson: { id: string; status: LessonStatus; completedExercises: number; totalExercises: number };
   unlockedTopics: TopicRef[];
   flashcard: { id: string; nextReviewAt: string } | null;
 };
@@ -126,11 +146,6 @@ export type DueCard = Linked & {
   answer: string;
   topic: TopicRef;
   nextReviewAt: string;
-  /**
-   * Se o cartão nasceu de um erro do aluno (e não de um cartão manual). Proposto: ainda não está no contrato da API; sem o
-   * campo, o app só não mostra o selo.
-   */
-  fromError?: boolean;
 };
 
 export type DueReviews = Linked & { count: number; items: DueCard[] };
