@@ -1,5 +1,5 @@
 import { TOPIC_ID } from '@/api/mock/content';
-import { computeScore, createMockApi } from '@/api/mock/mock-api';
+import { MOCK_ACCOUNT, computeScore, createMockApi, createMockBackend } from '@/api/mock/mock-api';
 
 const FRACTIONS_LESSON_2 = '0192f0c4-0003-7000-8000-000000000003';
 const EX_HALF_PLUS_THIRD = '0192f0c4-0004-7000-8000-000000000003';
@@ -25,6 +25,21 @@ describe('computeScore', () => {
 });
 
 describe('createMockApi', () => {
+  it('o /me traz o link self, como o back', async () => {
+    // Arrange
+    const { api, auth } = createMockBackend();
+    await auth.login({ email: MOCK_ACCOUNT.email, password: MOCK_ACCOUNT.password });
+
+    // Act
+    const me = await api.getMe();
+
+    // Assert
+    expect(me.student.name).toBe(MOCK_ACCOUNT.name);
+    expect(me.links).toEqual([
+      { href: expect.stringMatching(/\/me$/), rel: 'self', method: 'GET' },
+    ]);
+  });
+
   it('começa com Operações básicas dominado, Frações disponível e o resto bloqueado', async () => {
     // Arrange
     const api = createMockApi();
