@@ -1,0 +1,70 @@
+name: Pages
+
+# Publica o app, em modo mock, como site estático no GitHub Pages: https://lhpalma.github.io/estudarias-mobile/
+# O export roda em todo pull request, para um erro de build aparecer antes do merge; a publicação só acontece na main.
+# Antes da primeira publicação, o Pages precisa estar ligado em Settings > Pages, com a fonte "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  # Uma publicação em andamento não é cancelada por outra (o Pages recomenda assim); só a verificação de um pull request é.
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # O Expo embute as EXPO_PUBLIC_* na hora do export: é aqui que o app nasce em modo mock, sem rede e sem o back. O prefixo
+      # /estudarias-mobile (experiments.baseUrl, no app.json) vale só para o export; o npm start segue na raiz.
+      - name: Export web (mock)
+        run: npx expo export --platform web
+        env:
+          EXPO_PUBLIC_API_MOCK: 'true'
+
+      # O Pages não reescreve rotas: o que não existe responde com o 404.html, e o app, que roteia no navegador, abre qualquer
+      # caminho a partir dele (um link direto para /estudarias-mobile/trail, por exemplo).
+      - name: 404 fallback for the client-side routes
+        run: cp dist/index.html dist/404.html
+
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

@@ -31,7 +31,8 @@
     ],
     "scheme": "estudarias",
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/estudarias-mobile"
     }
   }
 }
