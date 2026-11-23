@@ -273,6 +273,7 @@ export function createMockBackend({
             name: current.name,
             experimentalGroup: group === 'control' ? 'Control' : 'Diagnostic',
           },
+          links: [link('/me', 'self')],
         };
       }),
 
