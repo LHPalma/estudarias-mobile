@@ -6,6 +6,7 @@ import type {
   Difficulty,
   DueReviews,
   Lesson,
+  LessonStatus,
   Link,
   ReviewRating,
   TopicAttempts,
@@ -82,6 +83,23 @@ export function computeScore(mostRecentFirst: Answer[]): number | null {
   return Math.floor(((100 * earned) / total) * 10) / 10;
 }
 
+/**
+ * O estado de uma lição, pela regra do back: concluída é ter acertado cada exercício pelo menos uma vez; errar depois não desfaz.
+ * Uma lição sem exercícios não foi iniciada (0 de 0) e nunca está concluída.
+ */
+export function lessonProgress(
+  exerciseIds: string[],
+  attempted: ReadonlySet<string>,
+  correct: ReadonlySet<string>,
+): { status: LessonStatus; completedExercises: number; totalExercises: number } {
+  const total = exerciseIds.length;
+  const completed = exerciseIds.filter((id) => correct.has(id)).length;
+  const started = exerciseIds.some((id) => attempted.has(id) || correct.has(id));
+  const status: LessonStatus =
+    total > 0 && completed === total ? 'completed' : started ? 'inProgress' : 'notStarted';
+  return { status, completedExercises: completed, totalExercises: total };
+}
+
 type Account = { id: string; studentId: string; name: string; email: string; password: string };
 
 const REFRESH_PREFIX = 'mock-refresh:';
@@ -121,6 +139,34 @@ export function createMockBackend({
   const history = new Map<string, Answer[]>(TOPICS.map((topic) => [topic.id, []]));
   const unlocked = new Set<string>([TOPIC_ID.basics, TOPIC_ID.fractions]);
   const mastered = new Set<string>([TOPIC_ID.basics]);
+  // Os exercícios que o aluno já tentou e os que já acertou: é daqui que sai o estado de cada lição, como no back.
+  const attempted = new Set<string>();
+  const correct = new Set<string>();
+  const exercisesOf = (topic: MockTopic) =>
+    topic.lessons.flatMap((lesson) => lesson.exercises.map((exercise) => exercise.id));
+  // Operações básicas já nasce com todos os exercícios acertados, e Frações com um acertado e um errado.
+  for (const topic of TOPICS.filter((candidate) => candidate.id === TOPIC_ID.basics)) {
+    for (const id of exercisesOf(topic)) {
+      attempted.add(id);
+      correct.add(id);
+    }
+  }
+  const fractionsLessons = TOPICS.find((topic) => topic.id === TOPIC_ID.fractions)?.lessons ?? [];
+  const seededRight = fractionsLessons[0]?.exercises[0]?.id;
+  const seededWrong = fractionsLessons[1]?.exercises[0]?.id;
+  if (seededRight) {
+    attempted.add(seededRight);
+    correct.add(seededRight);
+  }
+  if (seededWrong) {
+    attempted.add(seededWrong);
+  }
+  const progressOf = (lesson: { exercises: { id: string }[] }) =>
+    lessonProgress(
+      lesson.exercises.map((exercise) => exercise.id),
+      attempted,
+      correct,
+    );
   const cards: Card[] = [];
   let sequence = 0;
   const nextId = (table: number) => mockId(table, 1000 + ++sequence);
@@ -273,7 +319,7 @@ export function createMockBackend({
             name: current.name,
             experimentalGroup: group === 'control' ? 'Control' : 'Diagnostic',
           },
-          links: [link('/me', 'self')],
+          links: [link('/me', 'self'), link('/trail', 'trail')],
         };
       }),
 
@@ -290,6 +336,10 @@ export function createMockBackend({
           status: status(topic.id),
           score: scoreOf(topic.id),
           prerequisites: topic.prerequisites,
+          completedLessons: topic.lessons.filter(
+            (lesson) => progressOf(lesson).status === 'completed',
+          ).length,
+          totalLessons: topic.lessons.length,
           links: [link(`/topics/${topic.id}`, 'topic')],
         })),
         links: [link('/trail', 'self'), link('/reviews/due', 'reviews')],
@@ -323,9 +373,15 @@ export function createMockBackend({
             id: lesson.id,
             order: lesson.order,
             title: lesson.title,
+            ...progressOf(lesson),
             links: open ? [link(`/lessons/${lesson.id}`, 'lesson')] : [],
           })),
-          links: [link(`/topics/${topic.id}`, 'self'), link('/trail', 'trail')],
+          // O histórico só existe para quem pode praticar o tópico: o bloqueado responde 403.
+          links: [
+            link(`/topics/${topic.id}`, 'self'),
+            link('/trail', 'trail'),
+            ...(open ? [link(`/topics/${topic.id}/attempts`, 'attempts')] : []),
+          ],
         };
       }),
 
@@ -413,6 +469,10 @@ export function createMockBackend({
         }
 
         const isCorrect = chosen.id === exercise.correct;
+        attempted.add(exercise.id);
+        if (isCorrect) {
+          correct.add(exercise.id);
+        }
         history.set(topic.id, [
           {
             difficulty: exercise.difficulty,
@@ -456,6 +516,7 @@ export function createMockBackend({
             score: scoreOf(topic.id),
             attemptCount: history.get(topic.id)?.length ?? 0,
           },
+          lesson: { id: found.lesson.id, ...progressOf(found.lesson) },
           unlockedTopics,
           flashcard,
           links: [link(`/topics/${topic.id}`, 'topic'), link('/reviews/due', 'reviews')],
@@ -473,7 +534,6 @@ export function createMockBackend({
             answer: card.answer,
             topic: { id: card.topicId, name: topicById(card.topicId)?.name ?? '' },
             nextReviewAt: card.nextReviewAt.toISOString(),
-            fromError: card.errorType !== null,
             links: [link(`/reviews/${card.id}`, 'review', 'POST')],
           })),
           links: [link('/reviews/due', 'self'), link('/trail', 'trail')],

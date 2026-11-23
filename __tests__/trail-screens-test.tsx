@@ -73,6 +73,8 @@ describe('trilha', () => {
           status: 'available',
           score: null,
           prerequisites: [],
+          completedLessons: 0,
+          totalLessons: 0,
           links: [],
         },
       ],

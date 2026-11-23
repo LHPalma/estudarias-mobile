@@ -11,7 +11,6 @@ import {
   Notice,
   Screen,
   Skeleton,
-  StatusBadge,
 } from '@/components';
 import { colors, minTouchTarget, radius, spacing, type ColorName } from '@/theme';
 
@@ -157,7 +156,6 @@ function FlipCard({ card, revealed }: { card: DueCard; revealed: boolean }) {
           <AppText variant="overline" color="inkSoft" style={styles.fill}>
             {card.topic.name}
           </AppText>
-          {card.fromError ? <StatusBadge kind="fromError" /> : null}
         </View>
         <MathText variant="title" fractionSize="lg">
           {card.question}

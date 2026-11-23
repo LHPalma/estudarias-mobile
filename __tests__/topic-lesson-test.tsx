@@ -62,7 +62,17 @@ describe('tópico', () => {
       minAttempts: 5,
       prerequisites: [],
       unlocks: [],
-      lessons: [{ id: 'l1', order: 1, title: 'Soma', links: [] }],
+      lessons: [
+        {
+          id: 'l1',
+          order: 1,
+          title: 'Soma',
+          status: 'notStarted',
+          completedExercises: 0,
+          totalExercises: 2,
+          links: [],
+        },
+      ],
       links: [],
     };
     await render(<TopicView topic={topic} onBack={jest.fn()} onOpenLesson={onOpenLesson} />);
