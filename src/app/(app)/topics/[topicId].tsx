@@ -1,16 +1,15 @@
 import { router, useLocalSearchParams } from 'expo-router';
 
-import { isApiError, useTopic, useTopicAttempts } from '@/api';
+import { hasLink, isApiError, useTopic, useTopicAttempts } from '@/api';
 import { ErrorState, Screen, Skeleton } from '@/components';
 import { TopicView } from '@/features/topic/TopicView';
 
 export default function TopicScreen() {
   const { topicId } = useLocalSearchParams<{ topicId: string }>();
   const topic = useTopic(topicId);
-  const attempts = useTopicAttempts(
-    topicId,
-    topic.data !== undefined && topic.data.status !== 'locked',
-  );
+  // O histórico só se busca quando a API oferece o link `attempts`: ela decide se o tópico pode ser praticado.
+  const hasHistory = hasLink(topic.data, 'attempts');
+  const attempts = useTopicAttempts(topicId, hasHistory);
   const toTrail = () => router.dismissTo('/trail');
 
   return (
@@ -18,7 +17,7 @@ export default function TopicScreen() {
       refreshing={topic.isRefetching}
       onRefresh={() => {
         topic.refetch();
-        if (topic.data?.status !== 'locked') {
+        if (hasHistory) {
           attempts.refetch();
         }
       }}

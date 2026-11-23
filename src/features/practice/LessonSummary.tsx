@@ -15,7 +15,10 @@ type Props = {
   onBackToTrail: () => void;
 };
 
-/** O fim da lição: quantos acertos, como ficou a nota do tópico e quantos flashcards os erros criaram. */
+/**
+ * O fim da prática: quantos acertos, como ficou a lição e a nota do tópico e quantos flashcards os erros criaram. Só diz
+ * "Lição concluída" quando a API diz que a lição está concluída.
+ */
 export function LessonSummary({
   lessonTitle,
   answers,
@@ -26,6 +29,9 @@ export function LessonSummary({
   const correct = answers.filter((answer) => answer.result.isCorrect).length;
   const newCards = answers.filter((answer) => answer.result.flashcard !== null).length;
   const last = answers[answers.length - 1];
+  const lesson = last?.result.lesson;
+  // "Lição concluída" só quando a API diz que ela está concluída: acertar cada exercício pelo menos uma vez.
+  const completed = lesson?.status === 'completed';
 
   return (
     <Screen
@@ -42,8 +48,8 @@ export function LessonSummary({
       }
     >
       <View style={styles.heading}>
-        <AppText variant="overline" color="masteredInk">
-          Lição concluída
+        <AppText variant="overline" color={completed ? 'masteredInk' : 'progress'}>
+          {completed ? 'Lição concluída' : 'Fim da prática'}
         </AppText>
         <AppText variant="display" accessibilityRole="header">
           {lessonTitle}
@@ -53,6 +59,15 @@ export function LessonSummary({
       <Card>
         <Row label="Acertos" value={`${correct} de ${answers.length}`} />
         <View style={styles.rule} />
+        {lesson ? (
+          <>
+            <Row
+              label="Exercícios da lição acertados"
+              value={`${lesson.completedExercises} de ${lesson.totalExercises}`}
+            />
+            <View style={styles.rule} />
+          </>
+        ) : null}
         <Row label="Nota do tópico" value={shownScore(last?.result.topic.score ?? null)} />
         <View style={styles.rule} />
         <Row
@@ -60,6 +75,12 @@ export function LessonSummary({
           value={newCards === 0 ? 'Nenhum' : plural(newCards, 'cartão', 'cartões')}
         />
       </Card>
+
+      {lesson && !completed ? (
+        <AppText variant="support" color="inkStrong">
+          Acerte cada exercício da lição pelo menos uma vez para concluí-la. Você pode refazê-la.
+        </AppText>
+      ) : null}
 
       {last?.result.topic.status === 'mastered' ? (
         <AppText variant="support" color="masteredInk">

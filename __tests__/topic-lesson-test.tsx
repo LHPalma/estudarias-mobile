@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import type { TopicDetail } from '@/api';
+import * as mockApi from '@/api/mock/mock-api';
 import { TopicView } from '@/features/topic/TopicView';
 import { isEquationLine } from '@/lib/math-markup';
 import { expectPath, openApp, rememberSession, resetDevice } from 'test-utils/app';
@@ -13,6 +14,10 @@ const EQUATIONS_LESSON = '0192f0c4-0003-7000-8000-000000000004';
 beforeEach(async () => {
   resetDevice();
   await rememberSession();
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe('tópico', () => {
@@ -31,8 +36,27 @@ describe('tópico', () => {
     ).toBeTruthy();
     expect(screen.getByText('Ao dominar, libera Equações do 1º grau e Porcentagem.')).toBeTruthy();
     expect(
-      screen.getByRole('button', { name: 'Lição 2: Soma com denominadores diferentes' }),
+      screen.getByRole('button', { name: /^Lição 2: Soma com denominadores diferentes/ }),
     ).toBeEnabled();
+  });
+
+  it('cada lição mostra o estado dela: concluída, ou quantos exercícios já foram acertados', async () => {
+    // Act
+    await openApp(`/topics/${FRACTIONS}`);
+
+    // Assert
+    expect(
+      await screen.findByRole('button', {
+        name: 'Lição 1: Soma com denominadores iguais, concluída',
+      }),
+    ).toBeTruthy();
+    expect(screen.getByText('Concluída')).toBeTruthy();
+    expect(
+      screen.getByRole('button', {
+        name: 'Lição 2: Soma com denominadores diferentes, 0 de 3 exercícios acertados',
+      }),
+    ).toBeTruthy();
+    expect(screen.getByText('0 de 3 exercícios acertados')).toBeTruthy();
   });
 
   it('bloqueado: mostra os pré-requisitos que faltam, e as lições não abrem', async () => {
@@ -89,6 +113,43 @@ describe('tópico', () => {
     ).toBeTruthy();
   });
 
+  it('o histórico de respostas aparece pelo link attempts: a nota vem destas respostas', async () => {
+    // Act
+    await openApp(`/topics/${FRACTIONS}`);
+
+    // Assert
+    expect(await screen.findByRole('header', { name: 'Últimas respostas' })).toBeTruthy();
+    expect(screen.getByText(/A nota vem destas respostas/)).toBeTruthy();
+  });
+
+  it('sem o link attempts, o app não pede nem mostra o histórico, mesmo num tópico disponível', async () => {
+    // Arrange: a API deixa de oferecer o link `attempts`; o app monta o modo mock pelo módulo, então é ele que se troca
+    const getTopicAttempts = jest.fn();
+    const original = mockApi.createMockBackend;
+    jest.spyOn(mockApi, 'createMockBackend').mockImplementation((options) => {
+      const backend = original(options);
+      return {
+        ...backend,
+        api: {
+          ...backend.api,
+          getTopic: async (topicId) => {
+            const topic = await backend.api.getTopic(topicId);
+            return { ...topic, links: topic.links.filter((link) => link.rel !== 'attempts') };
+          },
+          getTopicAttempts,
+        },
+      };
+    });
+
+    // Act
+    await openApp(`/topics/${FRACTIONS}`);
+
+    // Assert
+    expect(await screen.findByRole('header', { name: 'Frações' })).toBeTruthy();
+    expect(screen.queryByRole('header', { name: 'Últimas respostas' })).toBeNull();
+    expect(getTopicAttempts).not.toHaveBeenCalled();
+  });
+
   it('um tópico que não existe oferece a volta para a trilha', async () => {
     // Arrange
     await openApp('/topics/nao-existe');
@@ -109,7 +170,7 @@ describe('lição', () => {
 
     // Act
     await fireEvent.press(
-      await screen.findByRole('button', { name: 'Lição 2: Soma com denominadores diferentes' }),
+      await screen.findByRole('button', { name: /^Lição 2: Soma com denominadores diferentes/ }),
     );
 
     // Assert
